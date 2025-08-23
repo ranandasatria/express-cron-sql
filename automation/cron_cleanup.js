@@ -29,6 +29,6 @@ const cleanOldFiles = async () => {
 };
 
 cron.schedule('0 0 * * *', cleanOldFiles);
-// change to * * * * * for testing every minutes
+// change to 30 * * * * * for testing every minutes
 
 console.log('Cron job started: Cleaning old CSV files daily.');

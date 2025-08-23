@@ -10,8 +10,8 @@ const fetchAndSaveWeatherData = async () => {
     const cronDir = path.join(__dirname, '..', 'home', 'cron');
     await fs.mkdir(cronDir, { recursive: true });
 
-    const response = await axios.get('https://api.open-meteo.com/v1/forecast?latitude=-6.1818&longitude=106.8223&hourly=temperature_2m&timezone=Asia%2FBangkok');
-    const { time, temperature_2m } = response.data.hourly;
+    const response = await axios.get('https://api.open-meteo.com/v1/forecast?latitude=-6.1818&longitude=106.8223&current=temperature_2m&timezone=Asia%2FBangkok');
+    const { time, temperature_2m } = response.data.current;
 
     const now = moment().tz('Asia/Bangkok').format('DDMMYYYY_HH.mm');
     const csvPath = path.join(cronDir, `cron_${now}.csv`);
@@ -22,12 +22,10 @@ const fetchAndSaveWeatherData = async () => {
         { id: 'time', title: 'Time' },
         { id: 'temperature', title: 'Temperature_2m' },
       ],
+      fieldDelimiter: ';',
     });
 
-    const records = time.map((t, index) => ({
-      time: t,
-      temperature: temperature_2m[index],
-    }));
+    const records = [{ time, temperature: temperature_2m }];
 
     await csvWriter.writeRecords(records);
     console.log(`Data saved to ${csvPath}`);
@@ -37,6 +35,6 @@ const fetchAndSaveWeatherData = async () => {
 };
 
 cron.schedule('0 8,12,15 * * *', fetchAndSaveWeatherData);
-// change to * * * * * for testing every minutes
+// change to 0 * * * * * for testing every minutes
 
-console.log('Cron job started: Collecting weather data at 08:00, 12:00, 15:00 WIB.');
+console.log('Cron job started: Collecting weather data every minute.');
