@@ -91,8 +91,8 @@ node cron_cleanup.js
     
 -   Run PostgreSQL container:
     
-```docker run -d --name postgres_db -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=admin123
--e POSTGRES_DB=employee_db -p 5432:5432 postgres:latest
+```
+docker run -d --name postgres_db -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=admin123 -e POSTGRES_DB=employee_db -p 5432:5432 postgres:latest
 ```
 ### Run Queries
 
