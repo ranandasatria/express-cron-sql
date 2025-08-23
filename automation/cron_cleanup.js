@@ -9,13 +9,13 @@ const cleanOldFiles = async () => {
     await fs.mkdir(dataDir, { recursive: true });
 
     const files = await fs.readdir(dataDir);
-    const oneMonthAgo = moment().tz('Asia/Bangkok').subtract(1, 'month'); // change substract to (1, 'minute') for testing
+    const oneMonthAgo = moment().tz('Asia/Jakarta').subtract(1, 'minute'); // change substract to (1, 'minute') for testing
 
     for (const file of files) {
       if (file.startsWith('cron_') && file.endsWith('.csv')) {
         const filePath = path.join(dataDir, file);
         const stats = await fs.stat(filePath);
-        const fileDate = moment(stats.mtime).tz('Asia/Bangkok');
+        const fileDate = moment(stats.mtime).tz('Asia/Jakarta');
 
         if (fileDate.isBefore(oneMonthAgo)) {
           await fs.unlink(filePath);
@@ -28,7 +28,10 @@ const cleanOldFiles = async () => {
   }
 };
 
-cron.schedule('0 0 * * *', cleanOldFiles);
+cron.schedule('0 0 0 * * *', cleanOldFiles, {
+  timezone: 'Asia/Jakarta'
+});
 // change to 30 * * * * * for testing every minutes
 
-console.log('Cron job started: Cleaning old CSV files daily.');
+
+console.log('Cron job started: Cleaning old CSV files daily at 00:00 WIB.');
