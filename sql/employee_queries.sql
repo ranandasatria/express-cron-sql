@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS employees (
     salary DECIMAL(10,2)
 );
 
--- Insert defautlt employees data 
+-- Insert default employees data 
 INSERT INTO employees (name, position, join_date, release_date, years_of_experience, salary) VALUES
     ('Jacky', 'Solution Architect', '2018-07-25', '2022-07-25', 8, 150.00),
     ('John', 'Assistant Manager', '2016-02-02', '2021-02-02', 12, 155.00),
