@@ -1,15 +1,16 @@
 # Express Cron SQL
 
-Simple backend project with three parts:
+A backend project demonstrating a RESTful API, scheduled data collection, and SQL data processing. It consists of three components:
 
-1. Product API using Express.js with in-memory storage.
+1. **Product API**: A Node.js/Express-based API with in-memory storage for managing products, secured with JWT authentication and documented with Swagger.
+2. **Scheduled Data Collection**: Cron jobs to collect weather data and perform automated file cleanup.
+3. **SQL Data Processing**: SQL scripts for managing and querying employee data
 
-2. Scheduled data collection using cron jobs.
 
-3. SQL scripts for data processing.
+# 1. Product API
 
-## System Design for Part 1
-This service is a simple layered Express app:
+## System Design
+This backend is a simple layered Express app:
 
 - Routes call controllers
 - Controllers validate and shape input and output
@@ -30,6 +31,7 @@ This service is a simple layered Express app:
 #### 1. Clone the repository
 ```
 git clone https://github.com/ranandasatria/express-cron-sql.git
+cd .\express-cron-sql\
 ```
 #### 2. Install depedencies
 ```
@@ -127,6 +129,55 @@ Protected routes:
   "stock": 10
 }
 ```
+
+# 2. Scheduled Data Collection
+Collects weather data from Open-Meteo API and saves it to ./home/cron/cron_DDMMYYYY_HH.MM.csv (relative path for cross-platform compatibility, e.g., Windows/Linux/Mac). Deletes files older than 1 month.
+
+## Prerequisites
+
+- Node.js
+- npm
+
+
+### How to Clone and Use
+
+#### 1. Clone the repository
+```
+git clone https://github.com/ranandasatria/express-cron-sql.git
+cd .\express-cron-sql\automation\
+```
+#### 2. Install depedencies
+```
+npm install
+```
+#### 3. Run data collection
+Collects weather data at 08:00, 12:00, 15:00 WIB and saves to ./home/cron/cron_DDMMYYYY_HH.MM.csv
+```
+node cron_collect.js
+```
+**Details:**
+- Fetches hourly temperature data from https://api.open-meteo.com/v1/forecast?latitude=-6.1818&longitude=106.8223&hourly=temperature_2m&timezone=Asia%2FBangkok.
+- CSV format: Columns Time and Temperature_2m.
+- File name example: cron_23082025_08.00.csv.
+- Schedule: 0 8,12,15 * * * (runs at 08:00, 12:00, 15:00 WIB daily).
+
+#### 4. Run data cleansing
+Deletes CSV files older than 1 month in ./home/cron, runs daily at 00:00 WIB
+```
+node cron_cleanup.js
+```
+**Details:**
+- Scans ./home/cron for files starting with cron_ and ending with .csv.
+- Uses file modification time (mtime) to check age.
+- Schedule: 0 0 * * * (midnight daily).
+
+#### 5. Testing
+- For quick testing, temporarily change the schedule in cron_collect.js to * * * * * (every minute), run the script, and check for new CSV files in ./home/cron.
+- For cleansing, change subtract(1, 'month') to subtract(1, 'minute') temporarily.
+- Revert changes after testing.
+
+#### Notes
+- Paths are relative (../home/cron from automation/ folder) for cross-platform use (Windows, Mac, Linux).
 
 
 
